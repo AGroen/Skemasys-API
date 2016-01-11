@@ -4,14 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.nodomain.util.ExtractUtil;
 import com.nodomain.util.HttpUtil;
 
 import jdk.nashorn.internal.ir.annotations.Immutable;
 
 /**
- * Class for scraping educations, terms, and courses from SkemaSys as well as
+ * Class for scraping educations, semesters, and courses from SkemaSys as well as
  * calendar data, parseable by
  * {@link com.nodomain.parser.Parser#parseFromStream(java.io.InputStream)}
  * 
@@ -19,7 +21,9 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
  *
  */
 public class Scraper {
+	/* Ex. {eduId} in an url is a placeholder for the education id */
 	private static final String indexUrl = "https://skemasys.akademiaarhus.dk/index.php";
+	private static final String termUrl = "https://skemasys.akademiaarhus.dk/index.php?educationId={eduId}";
 	
 	/**
 	 * Scrapes the names of all educations
@@ -29,8 +33,23 @@ public class Scraper {
 	 * @throws MalformedURLException 
 	 */
 	public List<TimetableVar> getEdus() throws MalformedURLException, IOException {
+		List<TimetableVar> edus = new ArrayList<TimetableVar>();
 		
-		return null;
+		//Download index HTML and extract HTML for the top menu containing links to educations
+		String indexPage = HttpUtil.downloadPage((new URL(indexUrl)).openConnection().getInputStream());
+		String menuHTML = ExtractUtil.extract(indexPage, "<div id=\"topMenu\">", "<div class=\"clear\"></div>", 1);
+		
+		String eduEntry;
+		int i = 1;
+		
+		while ((eduEntry = ExtractUtil.extract(menuHTML, "<a href=", "</li>", i++)) != null) {
+			String eduName = ExtractUtil.extract(eduEntry, "title=\"", "\">", 1);
+			int eduId = Integer.parseInt(ExtractUtil.extract(eduEntry, "\">", "</a>", 1));
+			
+			edus.add(new TimetableVar(eduName, eduId, TimetableVarType.EDUCATION));
+		}
+		
+		return edus;
 	}
 
 	/**
@@ -38,22 +57,41 @@ public class Scraper {
 	 * 
 	 * @param education
 	 *            The education to scrape terms from
-	 * @return A list of terms
+	 * @return A list of semesters
+	 * @throws IOException 
+	 * @throws MalformedURLException 
 	 */
-	public List<TimetableVar> getTerms(final String education) {
-		return null;
+	public List<TimetableVar> getSemesters(final TimetableVar education) throws MalformedURLException, IOException {
+		List<TimetableVar> semesters = new ArrayList<TimetableVar>();
+		
+		//Download index HTML and extract the navigation HTML that contains semesters
+		String indexPage = HttpUtil.downloadPage((new URL(termUrl.replace("{eduId}", "" + education.getId())))
+				.openConnection().getInputStream());
+		String menuHTML = ExtractUtil.extract(indexPage, "<div id=\"semesters\">", "<div class=\"box_bottom\"></div></div>", 1);
+				
+		String semEntry;
+		int i = 1;
+				
+		while ((semEntry = ExtractUtil.extract(menuHTML, "<a href=", "</tr>", i++)) != null) {
+			String semName = ExtractUtil.extract(semEntry, "</a>&nbsp;", "</td>", 1);
+			int semId = Integer.parseInt(ExtractUtil.extract(semEntry, "&amp;semesterId=", "\"><img", 1));
+					
+			semesters.add(new TimetableVar(semName, semId, TimetableVarType.SEMESTER));
+		}
+		
+		return semesters;
 	}
 
 	/**
 	 * Scrapes all courses for a named education at a named term
 	 * 
 	 * @param education
-	 *            The education to scrape find the term in
-	 * @param term
-	 *            The term to scrape courses from
+	 *            The education to scrape from
+	 * @param semester
+	 *            The semester to scrape courses from
 	 * @return A list of courses
 	 */
-	public List<TimetableVar> getcourse(final String education, final String term) {
+	public List<TimetableVar> getCourses(final TimetableVar education, final TimetableVar semester) {
 		return null;
 	}
 	
@@ -61,11 +99,11 @@ public class Scraper {
 	 * Scrape the calendar data from a specific class, parseable by the Parser class.
 	 * 
 	 * @param education The education wherein the class is located
-	 * @param term The term for the class
+	 * @param semester The semester for the class
 	 * @param course The class name
 	 * @return An {@link InputStream} to the calendar data
 	 */
-	public InputStream getCalenderData(final TimetableVar education, final TimetableVar term, final TimetableVar course) {
+	public InputStream getCalenderData(final TimetableVar education, final TimetableVar semester, final TimetableVar course) {
 		return null;
 	}
 	
@@ -108,8 +146,8 @@ public class Scraper {
 	 *
 	 */
 	private enum TimetableVarType {
-		education,
-		term,
-		course;
+		EDUCATION,
+		SEMESTER,
+		COURSE;
 	}
 }
