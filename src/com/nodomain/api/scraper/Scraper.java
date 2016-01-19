@@ -114,7 +114,7 @@ public class Scraper {
 		List<TimetableVar> coursesAndSubjects = new ArrayList<TimetableVar>();
 		
 		//Prepare URL and download semester HTML
-		String url = semesterUrl.replace("{eduId}", education.getId() + "").replace("{semId}", semester.getId() + "");
+		String url = educationUrl.replace("{eduId}", education.getId() + "").replace("{semId}", semester.getId() + "");
 		String semPage = HttpUtil.downloadPage((new URL(url).openConnection().getInputStream()));
 		
 		String entry;
@@ -123,7 +123,7 @@ public class Scraper {
 		//Extract courses
 		while ((entry = ExtractUtil.extract(semPage, "account=timetable_class&amp;class", "</tr>", i++)) != null) {
 			String entryName = ExtractUtil.extract(entry, "</a>&nbsp;", "</td>", 1).trim();
-			int entryId = Integer.parseInt(ExtractUtil.extract(entryName, "Id=", "\"><img", 1));
+			int entryId = Integer.parseInt(ExtractUtil.extract(entry, "Id=", "\"><img", 1));
 			
 			coursesAndSubjects.add(new TimetableVar(entryName, entryId, TimetableVarType.COURSE));
 		}
@@ -132,7 +132,7 @@ public class Scraper {
 		//Extract subjects
 		while ((entry = ExtractUtil.extract(semPage, "account=timetable_subject&amp;subject", "</tr>", i++)) != null) {
 			String entryName = ExtractUtil.extract(entry, "</a>&nbsp;", "</td>", 1).trim();
-			int entryId = Integer.parseInt(ExtractUtil.extract(entryName, "Id=", "\"><img", 1));
+			int entryId = Integer.parseInt(ExtractUtil.extract(entry, "Id=", "\"><img", 1));
 			
 			coursesAndSubjects.add(new TimetableVar(entryName, entryId, TimetableVarType.SUBJECT));
 		}

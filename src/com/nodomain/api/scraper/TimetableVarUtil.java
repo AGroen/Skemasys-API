@@ -65,4 +65,22 @@ public class TimetableVarUtil {
 	public static boolean isSubject(final TimetableVar var) {
 		return var.getType() == TimetableVarType.SUBJECT;
 	}
+	
+	/**
+	 * Search a list of timetable variables for the element with a specific id
+	 * 
+	 * @param list
+	 *            The list of timetable variables
+	 * @param id
+	 *            The ID to search for
+	 * @return The first timetable variable with an ID that matches the ID
+	 *         parameter, if not found then null
+	 */
+	public static TimetableVar getIdFromList(final List<TimetableVar> list, final int id) {
+		for (TimetableVar var : list)
+			if (var.getId() == id)
+				return var;
+		
+		return null;
+	}
 }
