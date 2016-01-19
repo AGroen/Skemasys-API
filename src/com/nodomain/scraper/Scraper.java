@@ -13,9 +13,14 @@ import com.nodomain.util.HttpUtil;
 import jdk.nashorn.internal.ir.annotations.Immutable;
 
 /**
- * Class for scraping educations, semesters, and courses from SkemaSys as well as
- * calendar data, parseable by
- * {@link com.nodomain.parser.Parser#parseFromStream(java.io.InputStream)}
+ * Class for scraping educations, semesters, courses, and subjects from SkemaSys
+ * as well as calendar data, parseable by
+ * {@link com.nodomain.parser.Parser#parseFromStream(java.io.InputStream)}<br>
+ * <br>
+ * There's a difference between a <b>course</b> and <b>subject</b>. A course is a class with
+ * multiple subjects. There will only be subjects available when all members of
+ * a class doesn't share all subjects, if they do then subjects won't be shown
+ * individually.
  * 
  * @author Anders Grøn
  *
@@ -23,7 +28,7 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
 public class Scraper {
 	/* Ex. {eduId} in an url is a placeholder for the education id */
 	private static final String indexUrl = "https://skemasys.akademiaarhus.dk/index.php";
-	private static final String termUrl = "https://skemasys.akademiaarhus.dk/index.php?educationId={eduId}";
+	private static final String semesterUrl = "https://skemasys.akademiaarhus.dk/index.php?educationId={eduId}";
 	
 	/**
 	 * Scrapes the names of all educations
@@ -53,20 +58,19 @@ public class Scraper {
 	}
 
 	/**
-	 * Scrapes all academic terms by name for a named education
+	 * Scrapes all academic terms (semseters) by name for a named education
 	 * 
 	 * @param education
 	 *            The education to scrape terms from
 	 * @return A list of semesters
-	 * @throws IOException 
-	 * @throws MalformedURLException 
+	 * @throws IOException
+	 * @throws MalformedURLException
 	 */
 	public List<TimetableVar> getSemesters(final TimetableVar education) throws MalformedURLException, IOException {
 		List<TimetableVar> semesters = new ArrayList<TimetableVar>();
 		
 		//Download index HTML and extract the navigation HTML that contains semesters
-		String indexPage = HttpUtil.downloadPage((new URL(termUrl.replace("{eduId}", "" + education.getId())))
-				.openConnection().getInputStream());
+		String indexPage = HttpUtil.downloadPage((new URL(semesterUrl.replace("{eduId}", "" + education.getId()))).openConnection().getInputStream());
 		String menuHTML = ExtractUtil.extract(indexPage, "<div id=\"semesters\">", "<div class=\"box_bottom\"></div></div>", 1);
 				
 		String semEntry;
@@ -83,24 +87,34 @@ public class Scraper {
 	}
 
 	/**
-	 * Scrapes all courses for a named education at a named term
+	 * Scrapes all courses and subjects (see {@link Scraper}) for a named
+	 * education at a named semester
 	 * 
 	 * @param education
 	 *            The education to scrape from
 	 * @param semester
 	 *            The semester to scrape courses from
-	 * @return A list of courses
+	 * @return A list of courses and subjects, see {@link ScraperUtil} for
+	 *         utility methods for filtering courses and subjects
 	 */
-	public List<TimetableVar> getCourses(final TimetableVar education, final TimetableVar semester) {
+	public List<TimetableVar> getCoursesAndSubjects(final TimetableVar education, final TimetableVar semester) {
+		//account=timetable_subject&amp;subjectId=    "><img class="messageImg"
+		//account=timetable_class&amp;classId=     "><img class="messageImg"
+		
+		
 		return null;
 	}
 	
 	/**
-	 * Scrape the calendar data from a specific class, parseable by the Parser class.
+	 * Scrape the calendar data from a specific course, parseable by the Parser
+	 * class.
 	 * 
-	 * @param education The education wherein the class is located
-	 * @param semester The semester for the class
-	 * @param course The class name
+	 * @param education
+	 *            The education wherein the class is located
+	 * @param semester
+	 *            The semester for the course
+	 * @param course
+	 *            The course name
 	 * @return An {@link InputStream} to the calendar data
 	 */
 	public InputStream getCalenderData(final TimetableVar education, final TimetableVar semester, final TimetableVar course) {
@@ -136,18 +150,5 @@ public class Scraper {
 		public String getName() { return name; }
 		public int getId() { return id; }
 		public TimetableVarType getType() { return type; }
-	}
-	
-	/**
-	 * Enum that describes the type of a TimetableVar object. Shouldn't be used
-	 * outside this class.
-	 * 
-	 * @author Anders Grøn
-	 *
-	 */
-	private enum TimetableVarType {
-		EDUCATION,
-		SEMESTER,
-		COURSE;
 	}
 }
