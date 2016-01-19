@@ -1,6 +1,6 @@
 package com.nodomain.api.parser;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,50 +17,8 @@ public class icsContainer {
 	
 	private List<CalEntry> calEntries;
 	
-	/* Sample calender entry:
-	 * 
-	 * BEGIN:VEVENT
-	 * UID:module_339827@skemasys.efif.dk
-	 * DTSTAMP:20160201T093000Z
-	 * DTSTART:20160201T093000Z
-	 * DTEND:20160201T110000Z
-	 * SUMMARY:Algorithms and Datastructures JHAJ
-	 * LOCATION:SH-A1.19B
-	 * END:VEVENT
-	 */
-	/**
-	 * Inner class that contains the data for a single entry in a calender.
-	 * 
-	 * @author Anders Grøn
-	 *
-	 */
-	public class CalEntry {
-		private LocalDateTime stamp, start, end;
-		private String summary;
-		private String location;
-		
-		public CalEntry(LocalDateTime stamp, LocalDateTime start, LocalDateTime end, String summary, String location) {
-			this.stamp = stamp;
-			this.start = start;
-			this.end = end;
-			this.summary = summary;
-			this.location = location;
-		}
-		
-		public LocalDateTime getStamp() {return stamp;}
-		public void setStamp(LocalDateTime stamp) {this.stamp = stamp;}
-		
-		public LocalDateTime getStart() {return start;}
-		public void setStart(LocalDateTime start) {this.start = start;}
-		
-		public LocalDateTime getEnd() {return end;}
-		public void setEnd(LocalDateTime end) {this.end = end;}
-		
-		public String getSummary() {return summary;}
-		public void setSummary(String summary) {this.summary = summary;}
-		
-		public String getLocation() {return location;}
-		public void setLocation(String location) {this.location = location;}
+	public icsContainer() {
+		this.calEntries = new ArrayList<CalEntry>();
 	}
 
 	public String getCalScale() {
@@ -120,10 +78,18 @@ public class icsContainer {
 	}
 
 	public List<CalEntry> getCalEntries() {
-		return calEntries;
+		return new ArrayList<CalEntry>(calEntries);
 	}
 
 	public void setCalEntries(List<CalEntry> calEntries) {
 		this.calEntries = calEntries;
+	}
+	
+	public void addCalEntry(final CalEntry entry) {
+		this.calEntries.add(entry);
+	}
+	
+	public void removeCalEntr(final CalEntry entry) {
+		this.calEntries.remove(entry);
 	}
 }

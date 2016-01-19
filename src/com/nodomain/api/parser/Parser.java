@@ -5,7 +5,7 @@ import java.io.InputStream;
 public class Parser {
 
 	/**
-	 * Contains all logic for parsing a stream of an iOS (.ics) calendar file.
+	 * Contains all logic for parsing a stream of an .ics calendar file.
 	 * 
 	 * @param in
 	 */
@@ -14,7 +14,7 @@ public class Parser {
 	}
 
 	/**
-	 * Parses an iOS calendar from a file. See
+	 * Parses an .ics calendar from a file. See
 	 * {@link #parseFromStream(InputStream)} for details.
 	 */
 	public void parseFromFile() {
