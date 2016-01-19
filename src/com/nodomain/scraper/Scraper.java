@@ -29,6 +29,7 @@ public class Scraper {
 	/* Ex. {eduId} in an url is a placeholder for the education id */
 	private static final String indexUrl = "https://skemasys.akademiaarhus.dk/index.php";
 	private static final String semesterUrl = "https://skemasys.akademiaarhus.dk/index.php?educationId={eduId}";
+	private static final String educationUrl = "https://skemasys.akademiaarhus.dk/index.php?educationId={eduId}&menuId=1&account=timetable_semester&semesterId={semId}";
 	
 	/**
 	 * Scrapes the names of all educations
@@ -69,15 +70,15 @@ public class Scraper {
 	public List<TimetableVar> getSemesters(final TimetableVar education) throws MalformedURLException, IOException {
 		List<TimetableVar> semesters = new ArrayList<TimetableVar>();
 		
-		//Download index HTML and extract the navigation HTML that contains semesters
-		String indexPage = HttpUtil.downloadPage((new URL(semesterUrl.replace("{eduId}", "" + education.getId()))).openConnection().getInputStream());
-		String menuHTML = ExtractUtil.extract(indexPage, "<div id=\"semesters\">", "<div class=\"box_bottom\"></div></div>", 1);
+		//Download education HTML and extract the navigation HTML that contains semesters
+		String eduPage = HttpUtil.downloadPage((new URL(semesterUrl.replace("{eduId}", "" + education.getId()))).openConnection().getInputStream());
+		String menuHTML = ExtractUtil.extract(eduPage, "<div id=\"semesters\">", "<div class=\"box_bottom\"></div></div>", 1);
 				
 		String semEntry;
 		int i = 1;
 				
 		while ((semEntry = ExtractUtil.extract(menuHTML, "<a href=", "</tr>", i++)) != null) {
-			String semName = ExtractUtil.extract(semEntry, "</a>&nbsp;", "</td>", 1);
+			String semName = ExtractUtil.extract(semEntry, "</a>&nbsp;", "</td>", 1).trim();
 			int semId = Integer.parseInt(ExtractUtil.extract(semEntry, "&amp;semesterId=", "\"><img", 1));
 					
 			semesters.add(new TimetableVar(semName, semId, TimetableVarType.SEMESTER));
@@ -96,13 +97,39 @@ public class Scraper {
 	 *            The semester to scrape courses from
 	 * @return A list of courses and subjects, see {@link ScraperUtil} for
 	 *         utility methods for filtering courses and subjects
+	 * @throws IOException 
+	 * @throws MalformedURLException 
 	 */
-	public List<TimetableVar> getCoursesAndSubjects(final TimetableVar education, final TimetableVar semester) {
-		//account=timetable_subject&amp;subjectId=    "><img class="messageImg"
-		//account=timetable_class&amp;classId=     "><img class="messageImg"
+	public List<TimetableVar> getCoursesAndSubjects(final TimetableVar education, final TimetableVar semester) throws MalformedURLException, IOException {
+		//account=timetable_subject&amp;subject    "><img class="messageImg"
+		//account=timetable_class&amp;class     "><img class="messageImg"
+		List<TimetableVar> coursesAndSubjects = new ArrayList<TimetableVar>();
 		
+		//Prepare URL and download semester HTML
+		String url = semesterUrl.replace("{eduId}", education.getId() + "").replace("{semId}", semester.getId() + "");
+		String semPage = HttpUtil.downloadPage((new URL(url).openConnection().getInputStream()));
 		
-		return null;
+		String entry;
+		int i = 1;
+		
+		//Extract courses
+		while ((entry = ExtractUtil.extract(semPage, "account=timetable_class&amp;class", "</tr>", i++)) != null) {
+			String entryName = ExtractUtil.extract(entry, "</a>&nbsp;", "</td>", 1).trim();
+			int entryId = Integer.parseInt(ExtractUtil.extract(entryName, "Id=", "\"><img", 1));
+			
+			coursesAndSubjects.add(new TimetableVar(entryName, entryId, TimetableVarType.COURSE));
+		}
+		
+		i = 1;
+		//Extract subjects
+		while ((entry = ExtractUtil.extract(semPage, "account=timetable_subject&amp;subject", "</tr>", i++)) != null) {
+			String entryName = ExtractUtil.extract(entry, "</a>&nbsp;", "</td>", 1).trim();
+			int entryId = Integer.parseInt(ExtractUtil.extract(entryName, "Id=", "\"><img", 1));
+			
+			coursesAndSubjects.add(new TimetableVar(entryName, entryId, TimetableVarType.SUBJECT));
+		}
+
+		return coursesAndSubjects;
 	}
 	
 	/**
