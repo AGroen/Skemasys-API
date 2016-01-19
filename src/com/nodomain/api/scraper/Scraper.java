@@ -38,7 +38,9 @@ public class Scraper {
 	private static final String indexUrl = "https://skemasys.akademiaarhus.dk/index.php";
 	private static final String semesterUrl = "https://skemasys.akademiaarhus.dk/index.php?educationId={eduId}";
 	private static final String educationUrl = "https://skemasys.akademiaarhus.dk/index.php?educationId={eduId}&menuId=1&account=timetable_semester&semesterId={semId}";
-	
+	private static final String icsCourseUrl = "https://skemasys.akademiaarhus.dk/calendar/timetable.php?classId={id}";
+	private static final String icsSubjectUrl = "https://skemasys.akademiaarhus.dk/calendar/timetable.php?subjectId={id}";
+			
 	/**
 	 * Scrapes the names of all educations
 	 * 
@@ -141,19 +143,25 @@ public class Scraper {
 	}
 	
 	/**
-	 * Scrape the calendar data from a specific course, parseable by the Parser
-	 * class.
+	 * Scrape the calendar data from a specific course or subject, parseable by
+	 * the Parser class.
 	 * 
-	 * @param education
-	 *            The education wherein the class is located
-	 * @param semester
-	 *            The semester for the course
-	 * @param course
-	 *            The course name
+	 * @param var
+	 *            The timetable variable of the course or subject
 	 * @return An {@link InputStream} to the calendar data
+	 * @throws IOException 
+	 * @throws MalformedURLException 
 	 */
-	public InputStream getCalenderData(final TimetableVar education, final TimetableVar semester, final TimetableVar course) {
-		return null;
+	public InputStream getCalenderData(final TimetableVar var) throws MalformedURLException, IOException {
+		String url = TimetableVarUtil.isCourse(var) ? icsCourseUrl :
+			TimetableVarUtil.isSubject(var) ? icsSubjectUrl : null;
+		
+		if (url == null)
+			throw new IllegalArgumentException("This method can only be called with a TimetableVar of type COURSE or SUBJECT.");
+		
+		url = url.replace("{id}", var.getId() + "");
+		
+		return new URL(url).openConnection().getInputStream();
 	}
 	
 	/**
