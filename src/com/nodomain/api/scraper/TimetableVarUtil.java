@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.nodomain.api.scraper.Scraper.TimetableVar;
 
-public class ScraperUtil {
+public class TimetableVarUtil {
 	/**
 	 * Extracts all courses from a list of timetable variables (normally this
 	 * list will only contain courses and subjects, but anything is fine)

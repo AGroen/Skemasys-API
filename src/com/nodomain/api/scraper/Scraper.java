@@ -2,6 +2,7 @@ package com.nodomain.api.scraper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,6 +26,13 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
  * @author Anders Grøn
  *
  */
+/*
+ * Developer note: This is a stateless class, therefore it makes sense to
+ * prevent instantiation and make every method static, but caching webpages
+ * might be implemented in the future. It depends how users will use this
+ * Scraper in practice. So no final decision has been made yet. Methods will
+ * remain not static for now.
+ */
 public class Scraper {
 	/* Ex. {eduId} in an url is a placeholder for the education id */
 	private static final String indexUrl = "https://skemasys.akademiaarhus.dk/index.php";
@@ -42,7 +50,7 @@ public class Scraper {
 		List<TimetableVar> edus = new ArrayList<TimetableVar>();
 		
 		//Download index HTML and extract HTML for the top menu containing links to educations
-		String indexPage = HttpUtil.downloadPage((new URL(indexUrl)).openConnection().getInputStream());
+		String indexPage = HttpUtil.downloadPage(HttpUtil.initHttpSession(indexUrl).getInputStream());
 		String menuHTML = ExtractUtil.extract(indexPage, "<div id=\"topMenu\">", "<div class=\"clear\"></div>", 1);
 		
 		String eduEntry;
@@ -50,7 +58,7 @@ public class Scraper {
 		
 		while ((eduEntry = ExtractUtil.extract(menuHTML, "<a href=", "</li>", i++)) != null) {
 			String eduName = ExtractUtil.extract(eduEntry, "title=\"", "\">", 1);
-			int eduId = Integer.parseInt(ExtractUtil.extract(eduEntry, "\">", "</a>", 1));
+			int eduId = Integer.parseInt(ExtractUtil.extract(eduEntry, "Id=", "\" title", 1));
 			
 			edus.add(new TimetableVar(eduName, eduId, TimetableVarType.EDUCATION));
 		}
@@ -95,7 +103,7 @@ public class Scraper {
 	 *            The education to scrape from
 	 * @param semester
 	 *            The semester to scrape courses from
-	 * @return A list of courses and subjects, see {@link ScraperUtil} for
+	 * @return A list of courses and subjects, see {@link TimetableVarUtil} for
 	 *         utility methods for filtering courses and subjects
 	 * @throws IOException 
 	 * @throws MalformedURLException 
@@ -170,9 +178,14 @@ public class Scraper {
 		}
 		
 		/**
-		 * Disallow instantiation outside this class file.
+		 * Disallow instantiation outside the outer class.
 		 */
 		private TimetableVar() { name = null; id = -1; type = null; }
+		
+		@Override
+		public String toString() {
+			return "Name=" + this.name + ", id=" + this.id + ", type=" + this.type;
+		}
 
 		public String getName() { return name; }
 		public int getId() { return id; }

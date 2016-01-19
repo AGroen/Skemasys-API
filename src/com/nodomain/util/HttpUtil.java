@@ -60,8 +60,9 @@ public class HttpUtil {
 		final StringBuilder sb = new StringBuilder();
 		byte[] buffer = new byte[Constants.BUFFER_SIZE];
 
-		while (is.read(buffer) != -1)
-			sb.append(buffer);
+		int size;
+		while ((size = is.read(buffer)) != -1)
+			sb.append(new String(buffer, 0, size));
 
 		return sb.toString();
 	}
