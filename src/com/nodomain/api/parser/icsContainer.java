@@ -2,6 +2,7 @@ package com.nodomain.api.parser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class that contains all data read from an .ics file
@@ -10,71 +11,25 @@ import java.util.List;
  *
  */
 public class icsContainer {
-	private String calScale, timezone, calName, calDesc;
-	
+	//private String calScale, timezone, calName, calDesc;
 	/** Seems like irrelevant variables, but they're saved just in case they'll ever come handy in the future. */
-	private String prodId, version, method;
+	//private String prodId, version, method;
+	
+	//Make getters for common properties that'll search the headers map
+	private Map<String, String> headers;
 	
 	private List<CalEntry> calEntries;
 	
 	public icsContainer() {
 		this.calEntries = new ArrayList<CalEntry>();
 	}
-
-	public String getCalScale() {
-		return calScale;
+	
+	public Map<String, String> getHeaders() {
+		return this.headers;
 	}
-
-	public void setCalScale(String calScale) {
-		this.calScale = calScale;
-	}
-
-	public String getTimezone() {
-		return timezone;
-	}
-
-	public void setTimezone(String timezone) {
-		this.timezone = timezone;
-	}
-
-	public String getCalName() {
-		return calName;
-	}
-
-	public void setCalName(String calName) {
-		this.calName = calName;
-	}
-
-	public String getCalDesc() {
-		return calDesc;
-	}
-
-	public void setCalDesc(String calDesc) {
-		this.calDesc = calDesc;
-	}
-
-	public String getProdId() {
-		return prodId;
-	}
-
-	public void setProdId(String prodId) {
-		this.prodId = prodId;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	public String getMethod() {
-		return method;
-	}
-
-	public void setMethod(String method) {
-		this.method = method;
+	
+	public void setHeaders(Map<String, String> headers) {
+		this.headers = headers;
 	}
 
 	public List<CalEntry> getCalEntries() {
