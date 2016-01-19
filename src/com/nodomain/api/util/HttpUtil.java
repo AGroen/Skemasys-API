@@ -1,4 +1,4 @@
-package com.nodomain.util;
+package com.nodomain.api.util;
 
 import java.io.IOException;
 import java.io.InputStream;

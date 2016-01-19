@@ -1,4 +1,4 @@
-package com.nodomain.scraper;
+package com.nodomain.api.scraper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,15 +7,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nodomain.util.ExtractUtil;
-import com.nodomain.util.HttpUtil;
+import com.nodomain.api.util.ExtractUtil;
+import com.nodomain.api.util.HttpUtil;
 
 import jdk.nashorn.internal.ir.annotations.Immutable;
 
 /**
  * Class for scraping educations, semesters, courses, and subjects from SkemaSys
  * as well as calendar data, parseable by
- * {@link com.nodomain.parser.Parser#parseFromStream(java.io.InputStream)}<br>
+ * {@link com.nodomain.api.parser.Parser#parseFromStream(java.io.InputStream)}<br>
  * <br>
  * There's a difference between a <b>course</b> and <b>subject</b>. A course is a class with
  * multiple subjects. There will only be subjects available when all members of

@@ -1,4 +1,4 @@
-package com.nodomain.scraper;
+package com.nodomain.api.scraper;
 
 /**
  * Enum type that describes the type of a TimetableVar object.

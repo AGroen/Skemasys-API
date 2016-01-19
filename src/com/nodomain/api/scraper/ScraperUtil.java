@@ -1,9 +1,9 @@
-package com.nodomain.scraper;
+package com.nodomain.api.scraper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nodomain.scraper.Scraper.TimetableVar;
+import com.nodomain.api.scraper.Scraper.TimetableVar;
 
 public class ScraperUtil {
 	/**

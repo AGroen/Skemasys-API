@@ -1,4 +1,4 @@
-package com.nodomain.util;
+package com.nodomain.api.util;
 
 /**
  * Cookies aren't used, but the class needs to be here to reuse code in HttpUtil

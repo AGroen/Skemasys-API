@@ -1,4 +1,4 @@
-package com.nodomain.parser;
+package com.nodomain.api.parser;
 
 import java.time.LocalDateTime;
 import java.util.List;
