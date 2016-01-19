@@ -1,4 +1,4 @@
-package com.nodomain.api.util;
+package com.nodomain.util;
 
 public class ExtractUtil {
 	public static String extractById(String str, String id, String attributeToReturn, int count) {

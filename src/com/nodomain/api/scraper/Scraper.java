@@ -7,8 +7,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nodomain.api.util.ExtractUtil;
-import com.nodomain.api.util.HttpUtil;
+import com.nodomain.util.ExtractUtil;
+import com.nodomain.util.HttpUtil;
 
 import jdk.nashorn.internal.ir.annotations.Immutable;
 

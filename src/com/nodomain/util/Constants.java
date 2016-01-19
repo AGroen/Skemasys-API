@@ -1,4 +1,4 @@
-package com.nodomain.api.util;
+package com.nodomain.util;
 
 public class Constants {
 	public static final boolean DEBUG = true;
