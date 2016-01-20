@@ -114,9 +114,10 @@ public class Parser {
 	 * @param url
 	 *            The URL to download the calendar from
 	 * @return An icsContainer with all the calendar headers and event entries
+	 * @throws IOException 
 	 */
-	public icsContainer parseFromURL(final String url) {
-		return null;
+	public icsContainer parseFromURL(final String url) throws IOException {
+		return parseFromStream(HttpUtil.initHttpSession(url).getInputStream());
 	}
 	
 	/**
