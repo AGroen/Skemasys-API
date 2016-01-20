@@ -33,6 +33,7 @@ import jdk.nashorn.internal.ir.annotations.Immutable;
  * Scraper in practice. So no final decision has been made yet. Methods will
  * remain not static for now.
  */
+//TODO ExtractUtil#extract() is inefficient, replace with ExtractAdvancer#next() in the future
 public class Scraper {
 	/* Ex. {eduId} in an url is a placeholder for the education id */
 	private static final String indexUrl = "https://skemasys.akademiaarhus.dk/index.php";

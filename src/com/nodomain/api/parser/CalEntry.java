@@ -1,6 +1,8 @@
 package com.nodomain.api.parser;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+
+import jdk.nashorn.internal.ir.annotations.Immutable;
 
 /* Sample calender entry:
  * 
@@ -19,12 +21,15 @@ import java.time.LocalDateTime;
  * @author Anders Grøn
  *
  */
+@Immutable
 public class CalEntry {
-	private LocalDateTime stamp, start, end;
-	private String summary;
-	private String location;
+	private final String uid; //Probably not needed, but better safe then sorry
+	private final ZonedDateTime stamp, start, end;
+	private final String summary;
+	private final String location;
 	
-	public CalEntry(LocalDateTime stamp, LocalDateTime start, LocalDateTime end, String summary, String location) {
+	public CalEntry(String uid, ZonedDateTime stamp, ZonedDateTime start, ZonedDateTime end, String summary, String location) {
+		this.uid = uid;
 		this.stamp = stamp;
 		this.start = start;
 		this.end = end;
@@ -32,18 +37,21 @@ public class CalEntry {
 		this.location = location;
 	}
 	
-	public LocalDateTime getStamp() {return stamp;}
-	public void setStamp(LocalDateTime stamp) {this.stamp = stamp;}
+	public String getUid() {return uid;}
+	//public void setUid(String uid) {this.uid = uid;}
 	
-	public LocalDateTime getStart() {return start;}
-	public void setStart(LocalDateTime start) {this.start = start;}
+	public ZonedDateTime getStamp() {return stamp;}
+	//public void setStamp(LocalDateTime stamp) {this.stamp = stamp;}
 	
-	public LocalDateTime getEnd() {return end;}
-	public void setEnd(LocalDateTime end) {this.end = end;}
+	public ZonedDateTime getStart() {return start;}
+	//public void setStart(LocalDateTime start) {this.start = start;}
+	
+	public ZonedDateTime getEnd() {return end;}
+	//public void setEnd(LocalDateTime end) {this.end = end;}
 	
 	public String getSummary() {return summary;}
-	public void setSummary(String summary) {this.summary = summary;}
+	//public void setSummary(String summary) {this.summary = summary;}
 	
 	public String getLocation() {return location;}
-	public void setLocation(String location) {this.location = location;}
+	//public void setLocation(String location) {this.location = location;}
 }	
