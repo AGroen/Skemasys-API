@@ -2,7 +2,6 @@ package com.nodomain.api.parser;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
@@ -131,6 +130,9 @@ public class Parser {
 	 */
 	private Map<String, String> keyValuePairsToMap(String keyValuePairs) {
 		Map<String, String> map = new HashMap<String, String>();
+		
+		//Remove linebreaks in front of and in the end of keyValuePairs string to avoid empty pairs
+		keyValuePairs = keyValuePairs.trim();
 
 		String[] keyValuePairsArr = keyValuePairs.split("\r\n");
 		

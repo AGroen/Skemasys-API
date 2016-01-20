@@ -37,6 +37,15 @@ public class CalEntry {
 		this.location = location;
 	}
 	
+	@Override
+	public String toString() {
+		return "Timestamp: " + this.stamp + "\n" +
+				"Start: " + this.start + "\n" +
+				"End: " + this.end + "\n" +
+				"Summary: " + this.summary + "\n" +
+				"Location: " + this.location;
+	}
+	
 	public String getUid() {return uid;}
 	//public void setUid(String uid) {this.uid = uid;}
 	

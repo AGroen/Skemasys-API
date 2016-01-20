@@ -27,6 +27,21 @@ public class icsContainer {
 		this.calEntries = new ArrayList<CalEntry>();
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("*****Headers*****\n");
+		for (Map.Entry<String, String> entry : headers.entrySet())
+			sb.append(entry.getKey() + " = " + entry.getValue() + "\n");
+		
+		sb.append("*****Events*****\n");
+		for (CalEntry event : calEntries)
+			sb.append(event.toString() + "\n");
+		
+		return sb.toString();
+	}
+	
 	public String getTimezone() {
 		String timezone = headers.get("X-WR-TIMEZONE");
 		
